@@ -136,7 +136,7 @@ export default {
       })
     },
     showReg() {
-      // console.log(111)
+      this.$refs.reg.dialogFormVisible = true
     }
   }
 }
