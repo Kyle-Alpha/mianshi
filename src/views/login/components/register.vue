@@ -1,10 +1,7 @@
 <template>
-  <el-dialog
-    title="用户注册"
-    :visible.sync="dialogFormVisible"
-  >
-    <el-form :model="form" :rules="rules" label-width="67px">
-      <el-form-item label="头像">
+  <el-dialog title="用户注册" :visible.sync="dialogFormVisible">
+    <el-form ref="regForm" :model="form" :rules="rules" label-width="67px">
+      <el-form-item label="头像" prop="avatar">
         <el-upload
           class="avatar-uploader"
           action=""
@@ -20,26 +17,38 @@
         <el-input v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.email"></el-input>
       </el-form-item>
       <el-form-item label="手机" prop="phone">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.phone"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.password"></el-input>
       </el-form-item>
       <el-form-item label="图形码" prop="imageCode">
-        <el-input v-model="form.name"></el-input>
+        <el-row>
+          <el-col :span="16">
+            <el-input v-model="form.imageCode"></el-input>
+          </el-col>
+          <el-col :span="8" class="alinright">
+            <img src="@/assets/login_code.png" alt="" class="imgBox" />
+          </el-col>
+        </el-row>
       </el-form-item>
       <el-form-item label="验证码" prop="authCode">
-        <el-input v-model="form.name"></el-input>
+        <el-row>
+          <el-col :span="16">
+            <el-input v-model="form.authCode"></el-input>
+          </el-col>
+          <el-col :span="8" class="alinright"
+            ><el-button>获取用户验证码</el-button></el-col
+          >
+        </el-row>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false"
-        >确 定</el-button
-      >
+      <el-button type="primary" @click="submitForm('regForm')">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -59,12 +68,33 @@ export default {
         authCode: ''
       },
       rules: {
-        name: [{required:true,message:'昵称不能为空',trigger:'blur'}],
-        email: [{required:true,message:'邮箱不能为空',trigger:'blur'}],
-        phone: [{required:true,message:'电话号码不能为空',trigger:'blur'}],
-        password: [{required:true,message:'密码不能为空',trigger:'blur'}],
-        imageCode: [{required:true,message:'图形验证码不能为空',trigger:'blur'}],
-        authCode: [{required:true,message:'验证码不能为空',trigger:'blur'}]
+        avatar: [
+          { required: true, message: '头像不能为空', trigger: 'change' }
+        ],
+        name: [{ required: true, message: '昵称不能为空', trigger: 'blur' }],
+        email: [
+          { required: true, message: '邮箱不能为空', trigger: 'blur' },
+          {
+            // pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/,
+            type: 'email',
+            message: '邮箱格式不正确',
+            trigger: 'blur'
+          }
+        ],
+        phone: [
+          { required: true, message: '电话号码不能为空', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' }
+        ],
+        imageCode: [
+          { required: true, message: '图形验证码不能为空', trigger: 'blur' },
+          { len: 4, message: '验证码长度只能为4', trigger: 'blur' }
+        ],
+        authCode: [
+          { required: true, message: '验证码不能为空', trigger: 'blur' },
+          { len: 4, message: '验证码长度只能为4', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -83,26 +113,41 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
-    }
+    },
+    submitForm(formname) {
+      this.$refs[formname].validate(v => {
+        if (v) {
+          // 信息提示框第一种
+          this.$message.success('验证成功')
+        } else {
+          // 信息提示框第二种
+          this.$message({
+            type: 'error',
+            message: '验证失败'
+          })
+        }
+      })
+    },
+    
   }
 }
 </script>
 
 <style lang="less">
 .el-dialog {
-  width: 602px ! important;
+  width: 602px !important;
   height: 786px;
   background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(78, 78, 78, 1);
   .el-dialog__header {
     width: 600px;
     height: 53px;
-    background:linear-gradient(to right,#01c5fc,#1395fd);
+    background: linear-gradient(to right, #01c5fc, #1395fd);
     text-align: center;
 
     line-height: 53px;
     padding: 0;
-    span{
+    span {
       color: #ffffff;
     }
   }
@@ -130,6 +175,13 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+  .imgBox {
+    height: 40px;
+    width: 143px;
+  }
+  .alinright {
+    text-align: right;
   }
   .dialog-footer {
     text-align: center;
