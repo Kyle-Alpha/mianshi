@@ -1,11 +1,11 @@
 const KEY = 'heimamm'
 
 export function setToken(tokenVal) {
-  window.localStorage.setItem(KEY,tokenVal)
+  window.sessionStorage.setItem(KEY,tokenVal)
 }
 export function getToken() {
-  window.localStorage.getItem(KEY)
+  return window.sessionStorage.getItem(KEY)
 }
 export function removeToken() {
-  window.localStorage.removeItem(KEY)
+  window.sessionStorage.removeItem(KEY)
 }

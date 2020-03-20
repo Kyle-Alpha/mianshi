@@ -69,9 +69,10 @@
     <reg ref="reg"></reg>
   </div>
 </template>
-
 <script>
 import reg from './components/register'
+import { login } from '@/api/login'
+import { setToken } from '@/utils/token'
 export default {
   components: {
     reg
@@ -79,12 +80,13 @@ export default {
   data() {
     return {
       form: {
-        phone: '13476894603',
-        password: '111111',
+        phone: '18511111111',
+        password: '12345678',
         code: '',
-        agree: false
+        agree: true
       },
-      imgUrl: process.env.VUE_APP_URL + '/captcha?type=login',
+      imgUrl:
+        process.env.VUE_APP_URL + '/captcha?type=login&date=' + Date.now(),
       rules: {
         // 手机号码表单验证规则
         phone: [
@@ -125,12 +127,26 @@ export default {
       this.$refs[formname].validate(v => {
         if (v) {
           // 信息提示框第一种
-          this.$message.success('验证成功')
+          login({
+            phone: this.form.phone,
+            password: this.form.password,
+            code: this.form.code
+          })
+            .then((res) => {
+              if(res.data.code==200){
+                setToken(res.data.data.token)
+                this.$router.push('/home')
+              }else{
+                this.$message.warning(res.data.message)
+                this.codeClick()
+              }
+            })
+
         } else {
           // 信息提示框第二种
           this.$message({
             type: 'error',
-            message: '验证失败'
+            message: '你有未输入的内容'
           })
         }
       })
