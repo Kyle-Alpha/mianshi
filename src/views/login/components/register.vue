@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="用户注册" :visible.sync="dialogFormVisible">
+  <el-dialog title="用户注册" :visible.sync="dialogFormVisible" width="44.6%">
     <el-form ref="regForm" :model="form" :rules="rules" label-width="67px">
       <el-form-item label="头像" prop="avatar">
         <el-upload
@@ -141,7 +141,7 @@ export default {
     cancle() {
       this.$refs.regForm.resetFields()
       this.dialogFormVisible = false
-      this.imageUrl=''
+      this.imageUrl = ''
     },
     submitForm(formname) {
       this.$refs[formname].validate(v => {
@@ -188,71 +188,65 @@ export default {
         code: this.form.imageCode,
         phone: this.form.phone
       }).then(res => {
-          console.log(res);
-        if(res.data.code==200){
+        console.log(res)
+        if (res.data.code == 200) {
           this.$message(`你的验证码为:${res.data.data.captcha}`)
-        }else{
+        } else {
           this.$message.error(res.data.message)
         }
-
       })
     }
   }
 }
 </script>
 
-<style lang="less" >
-.el-dialog {
-  width: 602px !important;
-  // height: 786px;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(78, 78, 78, 1);
-  .el-dialog__header {
-    width: 600px;
-    height: 53px;
-    background: linear-gradient(to right, #01c5fc, #1395fd);
-    text-align: center;
-
-    line-height: 53px;
-    padding: 0;
-    span {
-      color: #ffffff;
+<style lang="less">
+  .el-dialog {
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(78, 78, 78, 1);
+    .el-dialog__header {
+      background: linear-gradient(to right, #01c5fc, #1395fd);
+      text-align: center;
+      line-height: 53px;
+      padding: 0 !important;
+      span {
+        color: #ffffff;
+      }
+    }
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .avatar-uploader .el-upload:hover {
+      border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px !important;
+      text-align: center;
+    }
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+    .imgBox {
+      height: 40px;
+      width: 143px;
+    }
+    .alinright {
+      text-align: right;
+    }
+    .dialog-footer {
+      text-align: center;
     }
   }
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409eff;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px !important;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
-  .imgBox {
-    height: 40px;
-    width: 143px;
-  }
-  .alinright {
-    text-align: right;
-  }
-  .dialog-footer {
-    text-align: center;
-  }
-}
 </style>

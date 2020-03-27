@@ -1,28 +1,32 @@
 <template>
   <el-dialog
     center
-    :title="add ? '新增学科' : '编辑学科'"
+    :title="add ? '新增企业' : '编辑企业'"
     :visible.sync="dialogFormVisible"
     width="44.6%"
   >
-    <el-form ref="form" :rules="rules" :model="form" >
-      <el-form-item prop="rid" label="学科编号" :label-width="formLabelWidth">
-        <el-input v-model="form.rid" autocomplete="off"></el-input>
+    <el-form ref="form" :rules="rules" :model="form">
+      <el-form-item prop="eid" label="企业编号" :label-width="formLabelWidth">
+        <el-input v-model="form.eid" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item prop="name" label="学科名称" :label-width="formLabelWidth">
+      <el-form-item prop="name" label="企业名称" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item prop ="short_name" label="学科简称" :label-width="formLabelWidth">
+      <el-form-item
+        prop="short_name"
+        label="企业简称"
+        :label-width="formLabelWidth"
+      >
         <el-input v-model="form.short_name" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="学科简介" :label-width="formLabelWidth">
+      <el-form-item prop="intro" label="企业简介" :label-width="formLabelWidth">
         <el-input v-model="form.intro" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item label="学科备注" :label-width="formLabelWidth">
+      <el-form-item label="企业备注" :label-width="formLabelWidth">
         <el-input v-model="form.remark" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
@@ -35,7 +39,7 @@
 </template>
 
 <script>
-import { subjectEdit, subjectAdd } from '@/api/subject.js'
+import { enterpriseEdit, enterpriseAdd } from '@/api/enterprise.js'
 
 export default {
   data() {
@@ -47,8 +51,16 @@ export default {
       form: {},
       formLabelWidth: '80px',
       rules: {
-        rid: [{ required: true, message: '学科编号不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '学科名称不能为空', trigger: 'blur' }]
+        eid: [{ required: true, message: '企业编号不能为空', trigger: 'blur' }],
+        name: [
+          { required: true, message: '企业名称不能为空', trigger: 'blur' }
+        ],
+        short_name: [
+          { required: true, message: '企业简称不能为空', trigger: 'blur' }
+        ],
+        intro: [
+          { required: true, message: '企业简介不能为空', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -56,7 +68,7 @@ export default {
   methods: {
     doSave() {
       if (this.add) {
-        subjectAdd(this.form).then(res => {
+        enterpriseAdd(this.form).then(res => {
           if (res.data.code == 200) {
             this.$message.success('新增成功！')
             this.dialogFormVisible = false
@@ -67,7 +79,7 @@ export default {
           }
         })
       } else {
-        subjectEdit(this.form).then(res => {
+        enterpriseEdit(this.form).then(res => {
           if (res.data.code == 200) {
             this.$message.success('修改成功！')
             this.dialogFormVisible = false
@@ -78,13 +90,12 @@ export default {
         })
       }
     },
-    cancle(){
-      this.dialogFormVisible=false
-
+    cancle() {
+      this.dialogFormVisible = false
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style >
 </style>

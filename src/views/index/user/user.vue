@@ -8,26 +8,24 @@
         :model="formInline"
         class="demo-form-inline"
       >
-        <el-form-item label="学科编号" prop="rid">
-          <el-input class="short" v-model="formInline.rid"></el-input>
-        </el-form-item>
-        <el-form-item label="学科名称" prop="name">
-          <el-input class="normal" v-model="formInline.name"></el-input>
-        </el-form-item>
-        <el-form-item label="创建者" prop="username">
+        <el-form-item label="用户名称" prop="username">
           <el-input class="short" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select class="normal" v-model="formInline.status">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="禁用" value="0"></el-option>
+        <el-form-item label="用户邮箱" prop="email">
+          <el-input class="normal" v-model="formInline.email"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" prop="role_id">
+          <el-select class="normal" v-model="formInline.role_id">
+            <el-option label="管理员" value="2"></el-option>
+            <el-option label="老师" value="3"></el-option>
+            <el-option label="学生" value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="doSearch">搜索</el-button>
           <el-button @click="clearSearch">清除</el-button>
           <el-button type="primary" icon="el-icon-plus" @click="showDialog()"
-            >新增学科</el-button
+            >新增用户</el-button
           >
         </el-form-item>
       </el-form>
@@ -35,17 +33,21 @@
 
     <!-- 下面卡片 -->
     <el-card class="box-card">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" border>
         <el-table-column type="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="rid" label="学科编号"></el-table-column>
-        <el-table-column prop="name" label="学科名称"></el-table-column>
-        <el-table-column prop="short_name" label="简称"></el-table-column>
-        <el-table-column prop="username" label="创建者"></el-table-column>
-        <el-table-column prop="create_time" label="创建日期">
+        <el-table-column
+          prop="username"
+          label="用户名"
+          width="100"
+        ></el-table-column>
+        <el-table-column prop="phone" label="电话"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column label="角色">
           <template slot-scope="scope">
-            {{ scope.row.create_time | formatTime }}
+            {{ roles[scope.row.role_id - 1] }}
           </template>
         </el-table-column>
+        <el-table-column prop="remark" label="备注"></el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <el-switch
@@ -90,33 +92,32 @@
       </el-pagination>
     </el-card>
 
-    <subjectDialog ref="subjectDialog"></subjectDialog>
+    <userDialog ref="userDialog"></userDialog>
   </div>
 </template>
 
 <script>
-import { subjectList, subjectStatus, subjectDel } from '@/api/subject.js'
-import subjectDialog from './components/subjectDialog.vue'
+import { userList, userStatus, userRemove } from '@/api/user.js'
+import userDialog from './components/userDialog'
 
 export default {
-  name: 'subject',
+  name: 'user',
   components: {
-    subjectDialog
+    userDialog
   },
   data() {
     return {
       // 上面行内表单绑定的对象
       formInline: {
-        rid: '',
-        name: '',
         username: '',
-        status: ''
+        email: '',
+        role_id: ''
       },
+      searchData: {},
       // 表格绑定的数据源
       tableData: [],
-      // 查询的数据
-      searchData: {},
       // 分页的当前页
+      roles: ['超级管理员', '管理员', '老师', '学生'],
       page: 1,
       // 页容量
       size: 2,
@@ -130,7 +131,7 @@ export default {
     doDel(item) {
       this.$confirm('请问是否要删除这行数据？')
         .then(() => {
-          subjectDel({
+          userRemove({
             id: item.id
           }).then(res => {
             if (res.data.code == 200) {
@@ -147,26 +148,22 @@ export default {
             }
           })
         })
-        .catch.catch(c => c)
+        .catch(c => c)
     },
     // 点击不同按钮显示不同框
     showDialog(item) {
-      // 功能一：公用一个dialog
-      // 功能二：点击新增弹出空白的表单
-      // 功能三：点击编辑弹出含有内容的表单
-      // 功能四：点击同一条记录会保留上一次操作记录
-      this.$refs.subjectDialog.dialogFormVisible = true
+      this.$refs.userDialog.dialogFormVisible = true
       if (!item) {
-        this.$refs.subjectDialog.add = true
-        this.$refs.subjectDialog.form = {}
+        this.$refs.userDialog.form = {}
+        this.$refs.userDialog.add = true
       } else if (this.oldItem.id !== item.id) {
-        this.$refs.subjectDialog.add = false
+        this.$refs.userDialog.add = false
         let c = { ...item }
-        this.$refs.subjectDialog.form = c
+        this.$refs.userDialog.form = c
         this.oldItem = c
       } else {
-        this.$refs.subjectDialog.add = false
-        this.$refs.subjectDialog.form = this.oldItem
+        this.$refs.userDialog.add = false
+        this.$refs.userDialog.form = this.oldItem
       }
     },
 
@@ -182,15 +179,17 @@ export default {
     },
     // 给搜索加点击事件
     doSearch() {
-      // console.log(this.formInline);
       this.searchData = this.formInline
       this.getList()
     },
     // 修改状态的点击事件
     changeStatus(item) {
-      subjectStatus({
+      userStatus({
         id: item.id
       }).then(() => {
+        //刷新界面就可以了
+        //只要刷新表格就行了
+        //刷新表格其实就是对表格数据重新请求
         this.getList()
       })
     },
@@ -216,7 +215,7 @@ export default {
 
     // 封装的获取学科列表的函数
     getList() {
-      subjectList({
+      userList({
         page: this.page,
         // 你设置的页容量是多少，我就查出多少
         limit: this.size,

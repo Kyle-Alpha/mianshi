@@ -1,13 +1,15 @@
 <template>
-  <div class="app">
+  <div id="app">
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-export default {
-}
+export default {}
 </script>
+<style  >
+#nprogress .bar {
+  background: red !important;
+}
 
-
-
+</style>

@@ -1,19 +1,13 @@
-import request from '@/utils/request.js';
-
-// 暴露一个登录的方法出去
-export function logout(params) {
-    //发请求
-    return request({
-        url:  '/logout',
-        params,
-        // 携带cookie
-    })
+import request from '@/utils/request.js'
+// 退出登录
+export function logout() {
+  return request({
+    url: '/logout'
+  })
 }
-export function info(params) {
-    //发请求
-    return request({
-        url:  '/info',
-        params,
-        // 携带cookie
-    })
+// 获取用户信息
+export function info() {
+  return request({
+    url: '/info'
+  })
 }

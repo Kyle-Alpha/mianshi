@@ -14,8 +14,8 @@
       </div>
       <!-- 右边的部分 -->
       <div class="right">
-        <img :src="avatar" alt />
-        <span class="name">{{ username }}，你好</span>
+        <img :src="$store.state.info.avatar" alt />
+        <span class="name">{{ $store.state.info.username }}，你好</span>
         <el-button @click="doLogout" type="primary" size="mini">退出</el-button>
       </div>
     </el-header>
@@ -25,17 +25,16 @@
         <el-menu
           :collapse-transition="false"
           :collapse="isCollapse"
+          :default-active="$route.path"
           router
           unique-opened
         >
-          <el-menu-item
-            :index="'/home/' +item.path"
-            v-for="(item, index) in children"
-            :key="index"
-          >
-            <i :class="item.meta.icon"></i>
-            <span slot="title">{{ item.meta.title }}</span>
-          </el-menu-item>
+          <template v-for="(item, index) in children">
+            <el-menu-item :index="'/home/' + item.path" :key="index" v-if="item.meta.roles.includes($store.state.info.role)">
+              <i :class="item.meta.icon"></i>
+              <span slot="title">{{ item.meta.title }}</span>
+            </el-menu-item>
+          </template>
         </el-menu>
       </el-aside>
       <!-- 主体部分 -->
@@ -47,7 +46,7 @@
 </template>
 
 <script>
-import { logout, info } from '@/api/home'
+import { logout } from '@/api/home'
 import { removeToken } from '@/utils/token'
 import children from '@/router/children'
 export default {
@@ -86,13 +85,6 @@ export default {
           })
         })
     }
-  },
-  created() {
-    info().then(res => {
-      window.console.log(res)
-      this.avatar = process.env.VUE_APP_URL + '/' + res.data.data.avatar
-      this.username = res.data.data.username
-    })
   }
 }
 </script>

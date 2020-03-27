@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 // 创建一个新的请求对象
 let request = axios.create({
   baseURL: process.env.VUE_APP_URL,
@@ -7,7 +6,7 @@ let request = axios.create({
 })
 // console.log(request);
 // 导入token
-import { getToken } from '@/utils/token.js'
+import { getToken } from './token.js'
 // 请求拦截，后面发请求不用自己再一个一个设置token
 request.interceptors.request.use(
   function(config) {
@@ -21,5 +20,7 @@ request.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-
+// request.interceptors.response.use(config => {
+//   return config
+// })
 export default request

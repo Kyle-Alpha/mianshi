@@ -1,4 +1,4 @@
-body,html,.app{
+body,html,#app{
   height: 100%;
 }
 *{

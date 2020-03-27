@@ -2,7 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import login from '@/views/login/login'
 import home from '@/views/index/home'
-import children from './children';
+import children from './children'
+import { Message } from 'element-ui'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [
@@ -19,15 +22,37 @@ const router = new VueRouter({
       path: '/home',
       component: home,
       meta: { title: '主页' },
+      redirect: '/home/chart',
       children
+    },
+    {
+      path: '*',
+      redirect: '/login'
     }
   ]
 })
-import { getToken } from '@/utils/token'
+import { info } from '@/api/home'
+import store from '@/store/index.js'
+NProgress.inc(0.2)
+NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false })
 //路由导航守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.path === '/login') return next()
-  if (!getToken()) return next('/login')
+  const { data } = await info()
+  if (data.code === 206) return next('/login')
+  if (!data.data.status) {
+    Message.warning('该账号未激活，请联系管理员')
+    return 
+  }
+  let avatar = process.env.VUE_APP_URL + '/' + data.data.avatar
+  let username = data.data.username
+  let role = data.data.role
+  store.commit('setInfo', { avatar, username, role })
+  NProgress.start()
   next()
+})
+router.afterEach(to => {
+  document.title = to.meta.title
+  NProgress.done()
 })
 export default router

@@ -8,10 +8,10 @@
         :model="formInline"
         class="demo-form-inline"
       >
-        <el-form-item label="学科编号" prop="rid">
+        <el-form-item label="企业编号" prop="rid">
           <el-input class="short" v-model="formInline.rid"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称" prop="name">
+        <el-form-item label="企业名称" prop="name">
           <el-input class="normal" v-model="formInline.name"></el-input>
         </el-form-item>
         <el-form-item label="创建者" prop="username">
@@ -27,7 +27,7 @@
           <el-button type="primary" @click="doSearch">搜索</el-button>
           <el-button @click="clearSearch">清除</el-button>
           <el-button type="primary" icon="el-icon-plus" @click="showDialog()"
-            >新增学科</el-button
+            >新增企业</el-button
           >
         </el-form-item>
       </el-form>
@@ -37,12 +37,12 @@
     <el-card class="box-card">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="rid" label="学科编号"></el-table-column>
-        <el-table-column prop="name" label="学科名称"></el-table-column>
-        <el-table-column prop="short_name" label="简称"></el-table-column>
+        <el-table-column prop="eid" label="企业编号"></el-table-column>
+        <el-table-column prop="name" label="企业名称"></el-table-column>
         <el-table-column prop="username" label="创建者"></el-table-column>
         <el-table-column prop="create_time" label="创建日期">
           <template slot-scope="scope">
+            <!-- 把创建日期用全局过滤器过滤显示 -->
             {{ scope.row.create_time | formatTime }}
           </template>
         </el-table-column>
@@ -90,37 +90,35 @@
       </el-pagination>
     </el-card>
 
-    <subjectDialog ref="subjectDialog"></subjectDialog>
+    <enterpriseDialog ref="enterpriseDialog"></enterpriseDialog>
   </div>
 </template>
 
 <script>
-import { subjectList, subjectStatus, subjectDel } from '@/api/subject.js'
-import subjectDialog from './components/subjectDialog.vue'
+import {
+  enterpriseList,
+  enterpriseStatus,
+  enterpriseRemove
+} from '@/api/enterprise.js'
+import enterpriseDialog from './components/enterpriseDialog.vue'
 
 export default {
-  name: 'subject',
+  name: 'enterprise',
   components: {
-    subjectDialog
+    enterpriseDialog
   },
   data() {
     return {
-      // 上面行内表单绑定的对象
       formInline: {
         rid: '',
         name: '',
         username: '',
         status: ''
       },
-      // 表格绑定的数据源
-      tableData: [],
-      // 查询的数据
       searchData: {},
-      // 分页的当前页
+      tableData: [],
       page: 1,
-      // 页容量
       size: 2,
-      // 数据总量
       total: 0,
       oldItem: {}
     }
@@ -130,7 +128,7 @@ export default {
     doDel(item) {
       this.$confirm('请问是否要删除这行数据？')
         .then(() => {
-          subjectDel({
+          enterpriseRemove({
             id: item.id
           }).then(res => {
             if (res.data.code == 200) {
@@ -147,26 +145,23 @@ export default {
             }
           })
         })
-        .catch.catch(c => c)
+        .catch(c => c)
     },
     // 点击不同按钮显示不同框
     showDialog(item) {
-      // 功能一：公用一个dialog
-      // 功能二：点击新增弹出空白的表单
-      // 功能三：点击编辑弹出含有内容的表单
-      // 功能四：点击同一条记录会保留上一次操作记录
-      this.$refs.subjectDialog.dialogFormVisible = true
+      this.$refs.enterpriseDialog.dialogFormVisible = true
       if (!item) {
-        this.$refs.subjectDialog.add = true
-        this.$refs.subjectDialog.form = {}
-      } else if (this.oldItem.id !== item.id) {
-        this.$refs.subjectDialog.add = false
+        this.$refs.enterpriseDialog.form = {}
+        this.$refs.enterpriseDialog.add = true
+        return
+      } else if (item.id != this.oldItem.id) {
+        this.$refs.enterpriseDialog.add = false
         let c = { ...item }
-        this.$refs.subjectDialog.form = c
+        this.$refs.enterpriseDialog.form = c
         this.oldItem = c
       } else {
-        this.$refs.subjectDialog.add = false
-        this.$refs.subjectDialog.form = this.oldItem
+        this.$refs.enterpriseDialog.add = false
+        this.$refs.enterpriseDialog.form = this.oldItem
       }
     },
 
@@ -182,15 +177,19 @@ export default {
     },
     // 给搜索加点击事件
     doSearch() {
-      // console.log(this.formInline);
       this.searchData = this.formInline
       this.getList()
     },
     // 修改状态的点击事件
     changeStatus(item) {
-      subjectStatus({
+      // console.log(item);
+
+      enterpriseStatus({
         id: item.id
       }).then(() => {
+        //刷新界面就可以了
+        //只要刷新表格就行了
+        //刷新表格其实就是对表格数据重新请求
         this.getList()
       })
     },
@@ -216,7 +215,7 @@ export default {
 
     // 封装的获取学科列表的函数
     getList() {
-      subjectList({
+      enterpriseList({
         page: this.page,
         // 你设置的页容量是多少，我就查出多少
         limit: this.size,
