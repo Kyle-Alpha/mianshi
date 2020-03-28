@@ -148,7 +148,7 @@ export default {
         // 交集，既要满足circle也要满足orange，两个类都要有
         &.orange {
           border-color: #dc6b54;
-          color: dc6b54;
+          color: #dc6b54;
         }
 
         &.green {

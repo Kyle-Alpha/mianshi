@@ -33,41 +33,48 @@ export default {
       selfText: this.text,
       imageUrl: this.image,
       //上传地址
-      uploadUrl: process.env.VUE_APP_URL + "/question/upload"
-    };
+      uploadUrl: process.env.VUE_APP_URL + '/question/upload'
+    }
   },
-
+  watch: {
+    text(e) {
+      this.selfText = e
+    },
+    image(img) {
+      this.imageUrl = img
+    }
+  },
   methods: {
     // 输入框只要输入就触发的事件
     onInput() {
       //把selfText传递给父组件就行了
       // console.log(this.selfText);
-      this.$emit("update:text", this.selfText);
+      this.$emit('update:text', this.selfText)
     },
 
     // 上传成功的钩子
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.imageUrl = URL.createObjectURL(file.raw)
       //res就是服务器响应内容 赋值给父组件就可以了（传值）
       // console.log(res.data.url);
-      this.$emit("update:image", process.env.VUE_APP_URL+'/'+res.data.url);
+      this.$emit('update:image', process.env.VUE_APP_URL + '/' + res.data.url)
     },
 
     // 上传之前触发
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg" || "image/png" || "image/gif";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG = file.type === 'image/jpeg' || 'image/png' || 'image/gif'
+      const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是JPG 图片 格式!");
+        this.$message.error('上传头像图片只能是JPG 图片 格式!')
       }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
-};
+}
 </script>
 
 <style lang="less">

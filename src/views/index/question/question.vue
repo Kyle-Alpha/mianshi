@@ -18,9 +18,9 @@
         <el-form-item label="阶段" prop="step">
           <el-select v-model="formInline.step" placeholder="请选择阶段">
             <el-option value label="所有阶段"></el-option>
-            <el-option label="初级" :value="1"></el-option>
-            <el-option label="中级" :value="2"></el-option>
-            <el-option label="高级" :value="3"></el-option>
+            <el-option label="初级" value="1"></el-option>
+            <el-option label="中级" value="2"></el-option>
+            <el-option label="高级" value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="企业" prop="enterprise">
@@ -28,17 +28,16 @@
         </el-form-item>
         <el-form-item label="题型" prop="type">
           <el-select v-model="formInline.type" placeholder="请选择题型">
-            <el-option label="单选" value="1"></el-option>
-            <el-option label="多选" value="2"></el-option>
-            <el-option label="简答" value="3"></el-option>
+            <el-option label="单选" :value="1"></el-option>
+            <el-option label="多选" :value="2"></el-option>
+            <el-option label="简答" :value="3"></el-option>
           </el-select>
         </el-form-item>
-        <br />
         <el-form-item label="难度" prop="difficulty">
           <el-select v-model="formInline.difficulty" placeholder="请选择难度">
-            <el-option label="简单" :value="1"></el-option>
-            <el-option label="一般" :value="2"></el-option>
-            <el-option label="困难" :value="3"></el-option>
+            <el-option label="简单" value="1"></el-option>
+            <el-option label="一般" value="2"></el-option>
+            <el-option label="困难" value="3"></el-option>
           </el-select>
         </el-form-item>
 
@@ -79,7 +78,11 @@
     <el-card class="bottom-card">
       <el-table border :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="title" label="题目"></el-table-column>
+        <el-table-column label="题目">
+          <template slot-scope="scope">
+            <span v-html="scope.row.title"></span>
+          </template>
+        </el-table-column>
         <el-table-column prop="name" label="学科·阶段">
           <template slot-scope="scope">
             <!-- 用过滤器来做 -->
@@ -140,10 +143,7 @@
       ></el-pagination>
     </el-card>
 
-    <questionDialog
-      :formValue="formValue"
-      ref="questionDialog"
-    ></questionDialog>
+    <questionDialog  ref="questionDialog" />
   </div>
 </template>
 
@@ -176,8 +176,6 @@ export default {
       page: 1,
       size: 2,
       total: 0,
-      oldItem: {},
-      formValue: {}
     }
   },
 
@@ -234,15 +232,12 @@ export default {
       this.$refs.questionDialog.dialogFormVisible = true
       if (!item) {
         this.$refs.questionDialog.add = true
-      } else if (item.id !== this.oldItem.id) {
+      } else{
         this.$refs.questionDialog.add = false
         let c = clone(item)
-        console.log(c.city)
-        this.formValue = c
-        this.oldItem = c
-      } else {
-        this.$refs.questionDialog.add = false
-        this.formValue = this.oldItem
+        this.$refs.questionDialog.$nextTick(()=>{
+          this.$refs.questionDialog.form = c
+        })
       }
     },
 
@@ -253,10 +248,10 @@ export default {
         limit: this.size,
         ...this.formInline
       }).then(res => {
-        res.data.data.items.map(v => {
-          v.city = v.city.split(',')
-          return v
-        })
+        // res.data.data.items.map(v => {
+        //   v.city = v.city.split(',')
+        //   return v
+        // })
         this.tableData = res.data.data.items
         this.total = res.data.data.pagination.total
       })

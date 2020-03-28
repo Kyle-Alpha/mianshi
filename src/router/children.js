@@ -4,6 +4,7 @@ import chart from '@/views/index/chart/chart.vue'
 import enterprise from '@/views/index/enterprise/enterprise.vue'
 import question from '@/views/index/question/question.vue'
 import subject from '@/views/index/subject/subject.vue'
+
 export default [
   // 子路由一般不加/
   {

@@ -18,7 +18,7 @@ export default {
   props:{
 
       value:{
-          
+
           default:""
       },
 
@@ -39,10 +39,8 @@ export default {
   watch:{
 
     value(val){
-      // 参数就是它改变后的值，只要把value改变后的值再赋值给subject就可以了
-      // console.log('value变了，变成：' + val);
       this.subject = val;
-      
+
     }
   },
 

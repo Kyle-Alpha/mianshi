@@ -30,7 +30,11 @@
           unique-opened
         >
           <template v-for="(item, index) in children">
-            <el-menu-item :index="'/home/' + item.path" :key="index" v-if="item.meta.roles.includes($store.state.info.role)">
+            <el-menu-item
+              :index="'/home/' + item.path"
+              :key="index"
+              v-if="item.meta.roles.includes($store.state.info.role)"
+            >
               <i :class="item.meta.icon"></i>
               <span slot="title">{{ item.meta.title }}</span>
             </el-menu-item>
@@ -39,6 +43,9 @@
       </el-aside>
       <!-- 主体部分 -->
       <el-main>
+        <el-card v-if="$route.path == '/home'" class="welcome">
+          <span>欢迎进入黑马面面</span>
+        </el-card>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -150,6 +157,22 @@ export default {
   }
   .el-main {
     background: rgba(232, 233, 236, 1);
+    .welcome {
+      height: 100%;
+      width: 100%;
+      background:#07b6fa url(../../assets/login_banner_ele.png) no-repeat center bottom;
+      position: relative;
+      .el-card__body {
+        span {
+          position: absolute;
+          left: 50%;
+          top:10%;
+          transform: translate(-50%, -50%);
+          font-size: 48px;
+          color: #fff;
+        }
+      }
+    }
   }
 }
 </style>

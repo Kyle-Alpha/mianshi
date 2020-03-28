@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import login from '@/views/login/login'
 import home from '@/views/index/home'
 import children from './children'
+
 import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -21,10 +22,11 @@ const router = new VueRouter({
     {
       path: '/home',
       component: home,
-      meta: { title: '主页' },
-      redirect: '/home/chart',
+      meta: { title: '主页',roles:['超级管理员', '管理员', '老师', '学生'] },
+      // redirect: '/home/chart',
       children
     },
+
     {
       path: '*',
       redirect: '/login'
@@ -42,7 +44,13 @@ router.beforeEach(async (to, from, next) => {
   if (data.code === 206) return next('/login')
   if (!data.data.status) {
     Message.warning('该账号未激活，请联系管理员')
-    return 
+    return
+  } else {
+    if (!to.meta.roles.includes(data.data.role)) {
+      Message.warning('你无权访问该页面')
+      console.log(from.path);
+      return next(from.path)
+    }
   }
   let avatar = process.env.VUE_APP_URL + '/' + data.data.avatar
   let username = data.data.username

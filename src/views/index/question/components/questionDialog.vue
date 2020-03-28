@@ -5,6 +5,7 @@
     fullscreen
     :title="add ? '新增题库' : '编辑题库'"
     :visible.sync="dialogFormVisible"
+    @close="reset"
   >
     <el-form :model="form" :rules="rules" ref="form">
       <el-form-item label="学科" prop="subject" :label-width="formLabelWidth">
@@ -12,9 +13,9 @@
       </el-form-item>
       <el-form-item label="阶段" prop="step" :label-width="formLabelWidth">
         <el-select v-model="form.step" placeholder="请选择阶段">
-          <el-option label="初级" value="1"></el-option>
-          <el-option label="中级" value="2"></el-option>
-          <el-option label="高级" value="3"></el-option>
+          <el-option label="初级" :value="1"></el-option>
+          <el-option label="中级" :value="2"></el-option>
+          <el-option label="高级" :value="3"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item
@@ -31,9 +32,9 @@
 
       <el-form-item label="题型" prop="type" :label-width="formLabelWidth">
         <el-radio-group v-model="form.type">
-          <el-radio label="1">单选</el-radio>
-          <el-radio label="2">多选</el-radio>
-          <el-radio label="3">简答</el-radio>
+          <el-radio :label="1">单选</el-radio>
+          <el-radio :label="2">多选</el-radio>
+          <el-radio :label="3">简答</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -43,9 +44,9 @@
         :label-width="formLabelWidth"
       >
         <el-radio-group v-model="form.difficulty">
-          <el-radio label="1">简单</el-radio>
-          <el-radio label="2">一般</el-radio>
-          <el-radio label="3">困难</el-radio>
+          <el-radio :label="1">简单</el-radio>
+          <el-radio :label="2">一般</el-radio>
+          <el-radio :label="3">困难</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -146,7 +147,8 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <!-- dialogFormVisible = false -->
+      <el-button @click="reset">取 消</el-button>
       <el-button type="primary" @click="save">保 存</el-button>
     </div>
   </el-dialog>
@@ -172,9 +174,7 @@ export default {
     optionItem,
     videoUpload
   },
-  props: {
-    formValue: Object
-  },
+
   data() {
     return {
       dialogFormVisible: false,
@@ -183,8 +183,9 @@ export default {
         // 存视频地址
         video: '',
         // 存题型的
-        type: '1',
-        // 单选绑定答案
+        type: 1,
+        // 单选绑定答案,
+        city: '',
         single_select_answer: '',
         // 多选绑定答案，记得给数组
         multiple_select_answer: [],
@@ -256,15 +257,7 @@ export default {
       }
     }
   },
-  watch: {
-    formValue: {
-      handler(n) {
-        this.form = n
 
-      },
-      immediate: true
-    }
-  },
   methods: {
     //保存的点击事件
     save() {
@@ -290,6 +283,7 @@ export default {
             questionEdit(this.form).then(res => {
               if (res.data.code == 200) {
                 this.$message.success('编辑题库完成！')
+                this.$parent.oldItem = {}
                 // 重置表单元素,只能重置表单元素
                 // 而我们自己封装的组件，就不叫表单元素了
                 // 所以不会被清除，那如果我让组件销毁就能让组件的数据也清除了
@@ -305,6 +299,15 @@ export default {
           }
         }
       })
+    },
+    reset() {
+      this.$refs.form.resetFields()
+      this.form.select_options.map(v => {
+        v.text = ''
+        v.image = ''
+        return v
+      })
+      this.dialogFormVisible = false
     }
   }
 }
