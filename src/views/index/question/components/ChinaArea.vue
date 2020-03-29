@@ -1,10 +1,10 @@
 <template>
   <!-- props里写value，并且值为label，就代表获取级联菜单选中的值的时候，是获取的label属性值 -->
   <el-cascader
-    v-model="city"
+    :value="value.split(',')"
     :options="options"
     :props="{ expandTrigger: 'hover', value: 'label' }"
-    @change="handleChange"
+    @input="v=>{$emit('input',v.toString())}"
   ></el-cascader>
 </template>
 
@@ -17,21 +17,10 @@ export default {
   props: ['value'],
   data() {
     return {
-      city: this.value.split(','),
       options: regionDataPlus
     }
   },
 
-  methods: {
-    handleChange() {
-      this.$emit('input', this.city.toString())
-    }
-  },
-  watch: {
-    value(e){
-      this.city=e.split(',')
-    }
-  },
 }
 </script>
 
