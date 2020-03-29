@@ -57,8 +57,7 @@
       </el-form-item>
 
       <el-form-item label="试题标题" prop="title" :label-width="formLabelWidth">
-        <!-- 我们封装的富文本 -->
-        <myEditor v-model="form.title" />
+        <quill-editor v-model="form.title" :options="editorOption" />
       </el-form-item>
 
       <el-form-item
@@ -133,8 +132,7 @@
         label="答案解析"
         :label-width="formLabelWidth"
       >
-        <!-- 我们封装的富文本 -->
-        <myEditor v-model="form.answer_analyze" />
+        <quill-editor v-model="form.answer_analyze" :options="editorOption" />
       </el-form-item>
 
       <el-form-item
@@ -158,7 +156,11 @@
 // 导入省市区组件
 import chinaArea from './ChinaArea.vue'
 // 导入封装的富文本
-import myEditor from './myEditor.vue'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+import { quillEditor } from 'vue-quill-editor'
 // 导入选项的组件
 import optionItem from './optionItem.vue'
 // 导入视频上传的组件
@@ -170,7 +172,7 @@ import { questionAdd, questionEdit } from '@/api/question.js'
 export default {
   components: {
     chinaArea,
-    myEditor,
+    quillEditor,
     optionItem,
     videoUpload
   },
@@ -254,6 +256,32 @@ export default {
           trigger: 'blur'
         },
         remark: { required: true, message: '试题备注不能为空', trigger: 'blur' }
+      },
+      editorOption: {
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'], //加粗，斜体，下划线，删除线
+            ['blockquote', 'code-block'], //引用，代码块
+
+            [{ header: 1 }, { header: 2 }], // 标题，键值对的形式；1、2表示字体大小
+            [{ list: 'ordered' }, { list: 'bullet' }], //列表
+            // [{ script: 'sub' }, { script: 'super' }], // 上下标
+            [{ indent: '-1' }, { indent: '+1' }], // 缩进
+            // [{ direction: 'rtl' }], // 文本方向
+
+            // [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
+            // [{ header: [1, 2, 3, 4, 5, 6, false] }], //几级标题
+
+            [{ color: [] }, { background: [] }], // 字体颜色，字体背景颜色
+            // [{ font: [] }], //字体
+            [{ align: [] }], //对齐方式
+
+            ['clean'], //清除字体样式
+            ['image', 'video'] //上传图片、上传视频
+          ]
+        },
+        theme: 'snow',
+        placeholder: '请输入内容'
       }
     }
   },
@@ -299,11 +327,28 @@ export default {
     },
     reset() {
       this.$refs.form.resetFields()
-      this.form.select_options.map(v => {
-        v.text = ''
-        v.image = ''
-        return v
-      })
+      this.form.select_options = [
+        {
+          label: 'A',
+          text: '',
+          image: ''
+        },
+        {
+          label: 'B',
+          text: '',
+          image: ''
+        },
+        {
+          label: 'C',
+          text: '',
+          image: ''
+        },
+        {
+          label: 'D',
+          text: '',
+          image: ''
+        }
+      ]
       this.dialogFormVisible = false
     }
   }
@@ -326,6 +371,12 @@ export default {
 
   .avatar-uploader {
     text-align: left;
+  }
+  .quill-editor {
+    width: 800px;
+  }
+  .el-textarea {
+    width: 800px;
   }
 }
 </style>
