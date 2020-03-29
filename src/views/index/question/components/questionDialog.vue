@@ -267,9 +267,6 @@ export default {
             questionAdd(this.form).then(res => {
               if (res.data.code == 200) {
                 this.$message.success('新增题库完成！')
-                // 重置表单元素,只能重置表单元素
-                // 而我们自己封装的组件，就不叫表单元素了
-                // 所以不会被清除，那如果我让组件销毁就能让组件的数据也清除了
                 this.$refs.form.resetFields()
                 // 隐藏对话框
                 this.dialogFormVisible = false

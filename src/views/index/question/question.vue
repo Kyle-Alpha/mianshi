@@ -248,10 +248,10 @@ export default {
         limit: this.size,
         ...this.formInline
       }).then(res => {
-        // res.data.data.items.map(v => {
-        //   v.city = v.city.split(',')
-        //   return v
-        // })
+        res.data.data.items.map(v => {
+          v.city = v.city.split(',')
+          return v
+        })
         this.tableData = res.data.data.items
         this.total = res.data.data.pagination.total
       })

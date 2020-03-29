@@ -1,10 +1,14 @@
 <template>
   <!-- props里写value，并且值为label，就代表获取级联菜单选中的值的时候，是获取的label属性值 -->
   <el-cascader
-    :value="value.split(',')"
+    :value="value"
     :options="options"
     :props="{ expandTrigger: 'hover', value: 'label' }"
-    @input="v=>{$emit('input',v.toString())}"
+    @input="
+      v => {
+        $emit('input', v)
+      }
+    "
   ></el-cascader>
 </template>
 
@@ -19,8 +23,7 @@ export default {
     return {
       options: regionDataPlus
     }
-  },
-
+  }
 }
 </script>
 
