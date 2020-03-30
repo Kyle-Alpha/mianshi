@@ -250,6 +250,7 @@ export default {
       }).then(res => {
         res.data.data.items.map(v => {
           v.city = v.city.split(',')
+          v.multiple_select_answer = v.multiple_select_answer.split(',')
           return v
         })
         this.tableData = res.data.data.items
