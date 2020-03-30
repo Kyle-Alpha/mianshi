@@ -2,7 +2,7 @@
   <div class="option-box">
     <el-radio v-if="isRadio" :label="label"></el-radio>
     <el-checkbox v-else :label="label"></el-checkbox>
-    <el-input class="input" v-model="selfText" @input="onInput"></el-input>
+    <el-input class="input" :value="text" @input="v=>{$emit('update:text', v)}"></el-input>
     <!-- 放一个上传 -->
     <el-upload
       class="avatar-uploader"
@@ -30,27 +30,17 @@ export default {
   },
   data() {
     return {
-      selfText: this.text,
       imageUrl: this.image,
       //上传地址
       uploadUrl: process.env.VUE_APP_URL + '/question/upload'
     }
   },
   watch: {
-    text(e) {
-      this.selfText = e
-    },
     image(img) {
       this.imageUrl = img
     }
   },
   methods: {
-    // 输入框只要输入就触发的事件
-    onInput() {
-      //把selfText传递给父组件就行了
-      // console.log(this.selfText);
-      this.$emit('update:text', this.selfText)
-    },
 
     // 上传成功的钩子
     handleAvatarSuccess(res, file) {
